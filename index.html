@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padaria do Pão Quentinho</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bakery-cream': '#E8D7C3',
+                        'bakery-brown': '#8B6F47',
+                        'bakery-dark': '#5C4A2F',
+                        'bakery-light': '#F5EDE0',
+                        'bakery-accent': '#D4A574'
+                    },
+                    fontFamily: {
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F5EDE0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 20 Q 35 15 40 20 L 38 35 L 32 35 Z' fill='%23D4A574' opacity='0.1'/%3E%3Ccircle cx='70' cy='30' r='8' fill='%238B6F47' opacity='0.08'/%3E%3Cpath d='M20 70 L 30 65 L 35 75 L 25 80 Z' fill='%23D4A574' opacity='0.1'/%3E%3Ccircle cx='80' cy='80' r='6' fill='%238B6F47' opacity='0.08'/%3E%3C/svg%3E");
+        }
+
+        .dark body {
+            background-color: #2D2416;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 20 Q 35 15 40 20 L 38 35 L 32 35 Z' fill='%23D4A574' opacity='0.05'/%3E%3Ccircle cx='70' cy='30' r='8' fill='%238B6F47' opacity='0.05'/%3E%3Cpath d='M20 70 L 30 65 L 35 75 L 25 80 Z' fill='%23D4A574' opacity='0.05'/%3E%3Ccircle cx='80' cy='80' r='6' fill='%238B6F47' opacity='0.05'/%3E%3C/svg%3E");
+        }
+
+        .bread-icon {
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .price-display {
+            transition: all 0.3s ease;
+        }
+
+        .pulse-animation {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
+            height: 40px;
+        }
+
+        .bakery-pattern {
+            background-image:
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(139, 111, 71, 0.03) 10px, rgba(139, 111, 71, 0.03) 20px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <!-- Container Principal -->
+    <div class="max-w-md w-full">
+        <!-- Cabeçalho -->
+        <div class="text-center mb-8">
+            <div class="inline-block bg-bakery-brown dark:bg-bakery-dark text-bakery-light px-6 py-3 rounded-full shadow-lg mb-4">
+                <h1 class="font-display text-3xl"> Padaria do Pão Quentinho</h1>
+            </div>
+            <p class="text-bakery-dark dark:text-bakery-cream font-body text-sm">
+                Pães fresquinhos todos os dias!
+            </p>
+        </div>
+
+        <!-- Card Principal -->
+        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 bakery-pattern">
+            <!-- Ícone de Pão -->
+            <div class="text-center mb-6">
+                <div class="text-8xl bread-icon mb-2">🥖</div>
+                <h2 class="font-display text-2xl text-bakery-dark dark:text-bakery-cream">
+                    Calcule seu Pedido
+                </h2>
+            </div>
+
+            <!-- Preço Unitário -->
+            <div class="bg-bakery-light dark:bg-gray-700 rounded-2xl p-4 mb-6">
+                <div class="flex items-center justify-between">
+                    <label for="pricePerBread" class="text-bakery-dark dark:text-bakery-cream font-semibold">
+                        Preço por Pão:
+                    </label>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-bakery-dark dark:text-bakery-cream font-semibold">R$</span>
+                        <input
+                            type="number"
+                            id="pricePerBread"
+                            value="0.70"
+                            step="0.10"
+                            min="0.10"
+                            class="w-24 px-3 py-2 text-base text-center font-semibold bg-white dark:bg-gray-600 border-2 border-bakery-brown dark:border-bakery-accent rounded-lg text-bakery-dark dark:text-bakery-cream focus:outline-none focus:ring-2 focus:ring-bakery-accent"
+                            onchange="calculateTotal()"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input de Quantidade -->
+            <div class="mb-6">
+                <label for="quantity" class="block text-bakery-dark dark:text-bakery-cream font-semibold mb-3 text-lg">
+                    Quantidade de Pães:
+                </label>
+                <div class="flex items-center space-x-3">
+                    <button
+                        onclick="decreaseQuantity()"
+                        class="w-14 h-14 bg-bakery-brown dark:bg-bakery-dark text-white rounded-full text-2xl font-bold hover:bg-bakery-dark dark:hover:bg-bakery-brown transition-colors shadow-lg active:scale-95"
+                    >
+                        -
+                    </button>
+                    <input
+                        type="number"
+                        id="quantity"
+                        value="1"
+                        min="0"
+                        class="flex-1 px-4 py-4 text-base text-center text-3xl font-bold bg-bakery-light dark:bg-gray-700 border-3 border-bakery-brown dark:border-bakery-accent rounded-2xl text-bakery-dark dark:text-bakery-cream focus:outline-none focus:ring-4 focus:ring-bakery-accent"
+                        oninput="calculateTotal()"
+                    >
+                    <button
+                        onclick="increaseQuantity()"
+                        class="w-14 h-14 bg-bakery-brown dark:bg-bakery-dark text-white rounded-full text-2xl font-bold hover:bg-bakery-dark dark:hover:bg-bakery-brown transition-colors shadow-lg active:scale-95"
+                    >
+                        +
+                    </button>
+                </div>
+            </div>
+
+            <!-- Atalhos de Quantidade -->
+            <div class="grid grid-cols-4 gap-2 mb-6">
+                <button onclick="setQuantity(6)" class="py-3 bg-bakery-accent dark:bg-bakery-brown text-white rounded-xl font-semibold hover:bg-bakery-brown dark:hover:bg-bakery-accent transition-colors shadow active:scale-95">
+                    6
+                </button>
+                <button onclick="setQuantity(12)" class="py-3 bg-bakery-accent dark:bg-bakery-brown text-white rounded-xl font-semibold hover:bg-bakery-brown dark:hover:bg-bakery-accent transition-colors shadow active:scale-95">
+                    12
+                </button>
+                <button onclick="setQuantity(24)" class="py-3 bg-bakery-accent dark:bg-bakery-brown text-white rounded-xl font-semibold hover:bg-bakery-brown dark:hover:bg-bakery-accent transition-colors shadow active:scale-95">
+                    24
+                </button>
+                <button onclick="setQuantity(50)" class="py-3 bg-bakery-accent dark:bg-bakery-brown text-white rounded-xl font-semibold hover:bg-bakery-brown dark:hover:bg-bakery-accent transition-colors shadow active:scale-95">
+                    50
+                </button>
+            </div>
+
+            <!-- Divisor -->
+            <div class="border-t-2 border-bakery-accent dark:border-bakery-brown my-6"></div>
+
+            <!-- Resultado -->
+            <div id="result" class="price-display bg-gradient-to-r from-bakery-brown to-bakery-dark dark:from-bakery-accent dark:to-bakery-brown rounded-2xl p-6 text-center shadow-xl">
+                <div class="text-bakery-light font-semibold mb-2 text-sm uppercase tracking-wider">
+                    Total a Pagar:
+                </div>
+                <div id="totalPrice" class="text-5xl font-display text-white font-bold mb-3">
+                    R$ 0,80
+                </div>
+                <div id="totalQuantity" class="text-bakery-light font-semibold text-lg">
+                    1 pão
+                </div>
+            </div>
+
+            <!-- Botão Finalizar -->
+            <button
+                onclick="sendToWhatsApp()"
+                class="w-full mt-6 py-4 bg-green-600 dark:bg-green-700 text-white rounded-2xl font-bold text-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors shadow-lg active:scale-98"
+            >
+                📱 Enviar Pedido pelo WhatsApp
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-6 text-bakery-dark dark:text-bakery-cream text-sm">
+            <p>🍞 Feito com amor e farinha de qualidade 🍞</p>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-sm w-full p-8 transform transition-all">
+            <div class="text-center mb-6">
+                <div class="text-6xl mb-4">✅</div>
+                <h3 class="font-display text-2xl text-bakery-dark dark:text-bakery-cream mb-2">
+                    Pedido Confirmado!
+                </h3>
+                <p class="text-bakery-brown dark:text-bakery-accent">
+                    Seu pedido foi registrado com sucesso!
+                </p>
+            </div>
+
+            <div class="bg-bakery-light dark:bg-gray-700 rounded-2xl p-4 mb-6">
+                <div class="flex justify-between mb-2">
+                    <span class="text-bakery-dark dark:text-bakery-cream font-semibold">Quantidade:</span>
+                    <span id="confirmQuantity" class="text-bakery-dark dark:text-bakery-cream font-bold">0 pães</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-bakery-dark dark:text-bakery-cream font-semibold">Total:</span>
+                    <span id="confirmTotal" class="text-bakery-brown dark:text-bakery-accent font-bold text-xl">R$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button
+                    onclick="closeModal()"
+                    class="w-full py-3 bg-bakery-brown dark:bg-bakery-accent text-white rounded-xl font-semibold hover:bg-bakery-dark dark:hover:bg-bakery-brown transition-colors shadow"
+                >
+                    Fazer Novo Pedido
+                </button>
+                <button
+                    onclick="closeModal()"
+                    class="w-full py-3 bg-gray-300 dark:bg-gray-600 text-bakery-dark dark:text-white rounded-xl font-semibold hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+                >
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO DO WHATSAPP
+        // ============================================
+        // Configure aqui o número do WhatsApp da padaria
+        // Formato: Código do país + DDD + número (sem espaços, hífens ou parênteses)
+        // Exemplo: 5511999999999 (55 = Brasil, 11 = DDD de São Paulo, 999999999 = número)
+        const WHATSAPP_NUMBER = '559181727306';
+        // ============================================
+
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        function calculateTotal() {
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            const pricePerBread = parseFloat(document.getElementById('pricePerBread').value) || 0;
+            const total = quantity * pricePerBread;
+
+            const totalPriceElement = document.getElementById('totalPrice');
+            const totalQuantityElement = document.getElementById('totalQuantity');
+            const resultElement = document.getElementById('result');
+
+            // Formatação brasileira
+            totalPriceElement.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+            totalQuantityElement.textContent = quantity + (quantity === 1 ? ' pão' : ' pães');
+
+            // Animação de pulse
+            resultElement.classList.remove('pulse-animation');
+            void resultElement.offsetWidth; // Trigger reflow
+            resultElement.classList.add('pulse-animation');
+        }
+
+        function increaseQuantity() {
+            const input = document.getElementById('quantity');
+            input.value = parseInt(input.value || 0) + 1;
+            calculateTotal();
+        }
+
+        function decreaseQuantity() {
+            const input = document.getElementById('quantity');
+            const currentValue = parseInt(input.value || 0);
+            if (currentValue > 0) {
+                input.value = currentValue - 1;
+                calculateTotal();
+            }
+        }
+
+        function setQuantity(value) {
+            document.getElementById('quantity').value = value;
+            calculateTotal();
+        }
+
+        function sendToWhatsApp() {
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            const pricePerBread = parseFloat(document.getElementById('pricePerBread').value) || 0;
+            const total = quantity * pricePerBread;
+
+            if (quantity === 0) {
+                showAlert('Por favor, selecione pelo menos 1 pão para finalizar o pedido.');
+                return;
+            }
+
+            // Formatar a mensagem para o WhatsApp
+            const message = `🥖 *PEDIDO DE PÃES* 🥖\n\n` +
+                `📦 Quantidade: *${quantity} ${quantity === 1 ? 'pão' : 'pães'}*\n` +
+                `💰 Preço unitário: R$ ${pricePerBread.toFixed(2).replace('.', ',')}\n` +
+                `💵 *Valor Total: R$ ${total.toFixed(2).replace('.', ',')}*\n\n` +
+                `Aguardo confirmação! 😊`;
+
+            // Codificar a mensagem para URL
+            const encodedMessage = encodeURIComponent(message);
+
+            // Criar o link do WhatsApp com o número configurado
+            const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+            // Abrir o WhatsApp
+            window.open(whatsappURL, '_blank');
+        }
+
+        function showConfirmation() {
+            const quantity = parseInt(document.getElementById('quantity').value) || 0;
+            const pricePerBread = parseFloat(document.getElementById('pricePerBread').value) || 0;
+            const total = quantity * pricePerBread;
+
+            if (quantity === 0) {
+                showAlert('Por favor, selecione pelo menos 1 pão para finalizar o pedido.');
+                return;
+            }
+
+            document.getElementById('confirmQuantity').textContent = quantity + (quantity === 1 ? ' pão' : ' pães');
+            document.getElementById('confirmTotal').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        function showAlert(message) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg max-w-sm w-full mx-4">
+                    <div class="text-center mb-4">
+                        <div class="text-5xl mb-3">⚠️</div>
+                        <p class="text-bakery-dark dark:text-bakery-cream font-semibold">${message}</p>
+                    </div>
+                    <button
+                        class="w-full py-3 bg-bakery-brown dark:bg-bakery-accent text-white rounded-xl font-semibold hover:bg-bakery-dark dark:hover:bg-bakery-brown transition-colors"
+                        onclick="this.closest('.fixed').remove()"
+                    >
+                        OK
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Calcular total inicial
+        calculateTotal();
+    </script>
+</body>
+</html>
